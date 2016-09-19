@@ -1,5 +1,6 @@
 SRC = 	main.cpp\
 		core/core.cpp\
+		core/util/logger.cpp\
 		core/engine/map.cpp\
 		core/engine/seed.cpp\
 		core/engine/base/base.cpp\

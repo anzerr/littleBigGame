@@ -1,7 +1,12 @@
 #include <header.h>
 
 namespace dig {
-	/*
-		BASE CLASS
-	*/
+	Seed::Seed(int s) {
+		this->s = s;
+	}
+	
+	float Seed::next() {
+		this->s = (this->s * 9301 + 49297) % 233280;
+		return (this->s / (233280.0));
+	}
 }
