@@ -11,14 +11,29 @@ namespace dig { namespace entity {
 		this->shape->setPosition((this->x = x), (this->y = y));
 	}
 	
-	void Chunck::blockType(int n, float r) {
+	int Chunck::colType() {
+		return (1);
+	}
+	
+	int Chunck::blockType() {
+		return (this->blockTypeValue);
+	}
+	
+	void Chunck::setBlockType(int n, float r) {
+		this->blockTypeValue = n;
 		if (n == 1) {
 			int t = ((r != -1)? r * 55 : std::rand() % 55);
 			this->shape->setFillColor(sf::Color(200 + t, 200 + t, 200 + t));
-		} else {
-			this->shape->setFillColor(sf::Color(125 + (25 * n), 0, 0));
 		}
-		
+		if (n == 2) {
+			this->shape->setFillColor(sf::Color(125 + (125 * r), 0, 0));
+		}
+		if (n == 3) {
+			this->shape->setFillColor(sf::Color(0, 125 + (125 * r), 0));
+		}
+		if (n == 4) {
+			this->shape->setFillColor(sf::Color(0, 0, 125 + (125 * r)));
+		}
 	}
 	
 	void Chunck::draw() {

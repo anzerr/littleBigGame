@@ -4,7 +4,7 @@ namespace dig {
 	Core::Core() {
 		this->app = new sf::RenderWindow(sf::VideoMode(800, 600, 32), "SFML Graphics");
 		this->app->setFramerateLimit(60);
-		this->map = new Map(0);
+		this->map = new Map(0); 
 		this->map->generate(this);
 		
 		this->createGame();
