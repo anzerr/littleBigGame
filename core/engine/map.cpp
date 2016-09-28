@@ -4,6 +4,8 @@ namespace dig {
 	Map::Map(int level) {
 		this->level = level || 0;
 		this->size = 16;
+		this->startPosX = 0;
+		this->startPosY = 0;
 	}
 	
 	void Map::clear(Core *core) {
@@ -21,13 +23,17 @@ namespace dig {
 	}
 	
 	void Map::clearGrid(Core *core, int x, int y) {
-		std::string key = getGridCord(x, y);
+		this->clearGrid(core, getGridCord(x, y));
+	}
+	
+	void Map::clearGrid(Core *core, std::string key) {
+		dig::Logger::get()->log(key);
 		std::map<std::string, Entity*>::iterator chunck = core->colGrid.find(key);
-		std::vector<Entity*>::iterator it = core->entityList.begin();
 		if (chunck == core->colGrid.end()) {
 			return;
 		}
 		
+		std::vector<Entity*>::iterator it = core->entityList.begin();
 		while (it != core->entityList.end()) {
 			if ((*it) == (*chunck).second) {
 				delete *it;
@@ -127,11 +133,17 @@ namespace dig {
 			}
 		}
 		
+		bool start = false;
 		int i = 10 + (2 * s->next());
 		float size = (maxY / 16);
 		while (i > 0) {
 			int zoneX = (size * s->next()) - (size / 2);
 			int zoneY = (size * s->next()) - (size / 2);
+			if (!start) {
+				this->startPosX = this->size * ((maxX / 2) + zoneX);
+				this->startPosY = this->size * ((maxY / 2) + zoneY);
+				start = true;
+			}
 			this->branch(core, s, 3 * s->next(), 126, (maxX / 2) + zoneX, (maxY / 2) + zoneY);
 			size = size * 1.4;
 			i += -1;

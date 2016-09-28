@@ -3,6 +3,7 @@
 namespace dig { namespace entity {
 	Chunck::Chunck(sf::RenderWindow *app) {
 		this->type = "ent_chunck";
+		this->hitboxsize = 16;
 		this->app = app;
 		this->shape = new sf::RectangleShape(sf::Vector2f(16, 16));
 	}

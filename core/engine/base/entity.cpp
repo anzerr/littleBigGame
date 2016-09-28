@@ -8,4 +8,8 @@ namespace dig {
 	void Entity::update() {
 		dig::Logger::get()->log("update base");
 	}
+	
+	void Entity::setCore(dig::Core *core) {
+		this->core = core;
+	}
 }

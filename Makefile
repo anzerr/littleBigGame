@@ -1,11 +1,13 @@
 SRC = 	main.cpp\
 		core/core.cpp\
 		core/util/logger.cpp\
+		core/util/velocity.cpp\
 		core/engine/map.cpp\
 		core/engine/seed.cpp\
 		core/engine/base/base.cpp\
 		core/engine/base/entity.cpp\
 		core/entity/chunck.cpp\
+		core/entity/player.cpp
 
 CC		= g++
 NAME 	= game
