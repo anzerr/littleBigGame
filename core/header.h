@@ -17,6 +17,7 @@
 namespace dig {
 	class Base {
 		public:
+			std::string intToString(int x) ;
 			std::string getGridCord(int x, int y);
 	};
 	
@@ -53,6 +54,10 @@ namespace dig {
 			float y;
 			float hitboxsize;
 			void setCore(dig::Core *core);
+			void pos(float x, float y);
+			bool isCollide(float ax, float ay, float aw, float bx, float by, float bw);
+			void onCollide();
+			void physics();
 			void update();
 			void draw();
 	};
@@ -74,6 +79,7 @@ namespace dig {
 			Map(int level);
 			int level;
 			int size;
+			int nodeCount;
 			int startPosX;
 			int startPosY;
 			void branch(Core *core, Seed *s, int skip, int length, int startX, int startY);
@@ -89,11 +95,13 @@ namespace dig {
 		public:
 			Core(void);
 			Map *map;
+			sf::Text *text;
 			sf::RenderWindow *app;
 			entity::Player *player;
 			std::map<std::string, Entity*> colGrid;
 			std::vector<Entity*> entityList;
-			std::vector<std::string> removeList;
+			std::vector<Entity*> removeList;
+			int nodesMined;
 			void createWindow();
 			void createGame();
 			void render();
@@ -117,7 +125,12 @@ namespace dig {
 			public:
 				sf::RectangleShape *shape;
 				sf::RenderWindow *app;
-				Chunck(sf::RenderWindow *app);
+				Chunck(dig::Core *core);
+				int awake;
+				int health;
+				int beingHit;
+				float hit;
+				bool dig(int i);
 				int colType();
 				int blockType();
 				void pos(float x, float y);
@@ -127,13 +140,11 @@ namespace dig {
 		};
 		
 		class Player: public Entity {
-			private:
-				int blockTypeValue;
 			public:
 				sf::RectangleShape *shape;
 				sf::RectangleShape *tool;
 				sf::RenderWindow *app;
-				Player(sf::RenderWindow *app);
+				Player(dig::Core *core);
 				int isJump;
 				int jumpStamina;
 				int mouseX;

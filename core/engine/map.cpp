@@ -98,6 +98,7 @@ namespace dig {
 					failedNode = 0;
 					size = size * 1.05;
 					size = (size > maxSize) ? maxSize : size;
+					this->nodeCount += 1;
 					dig::Logger::get()->log("found space added");
 					continue;
 				}
@@ -125,7 +126,7 @@ namespace dig {
 		
 		for (int y = 1; y < maxY; y++) {			
 			for (int x = 1; x < maxX; x++) {
-				entity::Chunck *tmp = new entity::Chunck(core->app);
+				entity::Chunck *tmp = new entity::Chunck(core);
 				tmp->setBlockType(1, s->next());
 				this->setGrid(core, x, y, tmp);
 				tmp->pos(this->size * x, this->size * y);
@@ -151,6 +152,7 @@ namespace dig {
 		
 		i = 3;
 		size = (maxY / 12);
+		this->nodeCount = 0;
 		while (i > 0) {
 			int zoneX = (size * s->next()) - (size / 2);
 			int zoneY = (size * s->next()) - (size / 2);

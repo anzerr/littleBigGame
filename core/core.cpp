@@ -5,6 +5,15 @@ namespace dig {
 		this->app = new sf::RenderWindow(sf::VideoMode(800, 600, 32), "SFML Graphics");
 		this->app->setFramerateLimit(60);
 		this->map = new Map(0);
+		sf::Font font;
+		if (!font.loadFromFile("resources/OpenSans.ttf")) {
+			// erreur...
+		}
+		this->text = new sf::Text();
+		this->text->setFont(font);
+		this->text->setColor(sf::Color::Red);
+		this->text->setCharacterSize(24);
+		//this->text->setColor(sf::Color::Red);
 
 		this->createGame();
 		this->run();
@@ -14,22 +23,28 @@ namespace dig {
 		this->map->level += 1;
 		this->map->clear(this);
 		this->map->generate(this);
+		this->nodesMined = 0;
 	
-		entity::Player *tmp = new entity::Player(this->app);
+		entity::Player *tmp = new entity::Player(this);
 		tmp->pos(this->map->startPosX, this->map->startPosY);
-		tmp->setCore(this);
 		this->entityList.push_back(tmp);
 		this->player = tmp;
 	}
 	
 	void Core::render() {
-		std::vector<std::string>::iterator rit;
-		for (rit = this->removeList.begin(); rit != this->removeList.end(); ++rit) {
-			this->map->clearGrid(this, (*rit));
+		std::vector<Entity*>::iterator rit;
+		std::vector<Entity*>::iterator it;
+		
+		for (rit = removeList.begin(); rit != removeList.end(); ++rit) {
+			for (it = entityList.begin(); it != entityList.end(); ++it) {
+				if ((*rit) == (*it)) {
+					this->entityList.erase(it);
+					break;
+				}
+			}
 		}
 		this->removeList.erase(this->removeList.begin(), this->removeList.end());	
 		
-		std::vector<Entity*>::iterator it;
 		for (it = entityList.begin(); it != entityList.end(); ++it) {
 			std::string type = (*it)->type;
 			//dig::Logger::get()->log(type);
@@ -58,6 +73,7 @@ namespace dig {
 				continue;
 			}
 		}
+		this->app->draw(*this->text);
 	}
 
 	void Core::run() {
@@ -69,25 +85,30 @@ namespace dig {
 				}
 			}
 			
-			sf::Vector2i position = sf::Mouse::getPosition(*this->app);
-			this->player->setMouse(position.x, position.y);
-			
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+			this->text->setString(intToString(this->map->nodeCount - this->nodesMined));
+			if (this->nodesMined == this->map->nodeCount) {
 				this->createGame();
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-				this->player->mining = 1;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-				this->player->jump();
-			}
-			this->player->vecX(
-				((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) ? 1 : 0) + ((sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) ? -1 : 0)
-			);
+			} else {				
+				sf::Vector2i position = sf::Mouse::getPosition(*this->app);
+				this->player->setMouse(position.x, position.y);
+				
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+					this->createGame();
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+					this->player->mining = 1;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+					this->player->jump();
+				}
+				this->player->vecX(
+					((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) ? 1 : 0) + ((sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) ? -1 : 0)
+				);
 
-			this->app->clear();
-			this->render();
-			this->app->display();
+				this->app->clear();
+				this->render();
+				this->app->display();
+			}
 		}
 	}
 }

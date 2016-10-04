@@ -1,10 +1,11 @@
 #include <header.h>
 
 namespace dig { namespace entity {
-	Player::Player(sf::RenderWindow *app) {
+	Player::Player(dig::Core *core) {
+		this->core = core;
 		this->type = "ent_player";
 		this->hitboxsize = 6;
-		this->app = app;
+		this->app = core->app;
 		this->shape = new sf::RectangleShape(sf::Vector2f(6, 6));
 		this->shape->setFillColor(sf::Color(255, 255, 0));
 		
@@ -80,7 +81,7 @@ namespace dig { namespace entity {
 			this->jumpStamina = 0;
 		}*/
 		
-		if (this->mining) {
+		/*if (this->mining) {
 			float deltaX = this->x - this->mouseX;
 			float deltaY = this->y - this->mouseY;
 			float rad = std::atan2(deltaY, deltaX); // In radians
@@ -98,19 +99,31 @@ namespace dig { namespace entity {
 			if (rad < (side * -1) && rad > (side * -2)) {
 				this->core->removeList.push_back(getGridCord((this->x / 16), (this->y / 16) + 1));
 			}
-			/*if (side < 0 && side > -90) {
-				this->core->removeList.push_back(getGridCord((this->x / 16), (this->y / 16) + 1));
-			}*/
-			/*if (side < 360 && side > 180) {
-				this->core->removeList.push_back(getGridCord((this->x / 16) + 1, (this->y / 16)));
-			}*/
+			//if (side < 0 && side > -90) {
+			//	this->core->removeList.push_back(getGridCord((this->x / 16), (this->y / 16) + 1));
+			/}
+			//if (side < 360 && side > 180) {
+			//	this->core->removeList.push_back(getGridCord((this->x / 16) + 1, (this->y / 16)));
+			//}
 			this->mining = 0;
-		}
+		}*/
 		
 		
 		for (it = this->core->entityList.begin(); it != this->core->entityList.end(); ++it) {
 			std::string type = (*it)->type;
 			if (type != "ent_player") {
+				if (this->mining) {
+					float deltaX = this->x - this->mouseX;
+					float deltaY = this->y - this->mouseY;
+					float rad = std::atan2(deltaY, deltaX) + 3.14159;
+					if (this->isCollide(this->x + (cos(rad) * 8), this->y + (sin(rad) * 8), 4, (*it)->x, (*it)->y, (*it)->hitboxsize)) {
+						entity::Chunck *tmp = (entity::Chunck *)(*it);
+						if (tmp->dig(1)) {
+							this->core->removeList.push_back((*it));
+						}
+					}
+				}
+				
 				if (this->isCollide(x, this->y, this->hitboxsize, (*it)->x, (*it)->y, (*it)->hitboxsize)) {
 					allowX = false;
 					this->velocity->resetX();
@@ -125,6 +138,7 @@ namespace dig { namespace entity {
 				}
 			}
 		}
+		this->mining = 0;
 		
 		this->pos((allowX)? x : this->x, (allowY)? y : this->y);
 		if (this->isJump != -1) {
