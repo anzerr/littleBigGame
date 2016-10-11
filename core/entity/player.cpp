@@ -8,6 +8,7 @@ namespace dig { namespace entity {
 		this->app = core->app;
 		this->shape = new sf::RectangleShape(sf::Vector2f(6, 6));
 		this->shape->setFillColor(sf::Color(255, 255, 0));
+		//this->particles = new ParticleSystem(1000);
 		
 		this->tool = new sf::RectangleShape(sf::Vector2f(3, 6));
 		this->tool->setFillColor(sf::Color(255, 0, 255));
@@ -55,6 +56,7 @@ namespace dig { namespace entity {
 	void Player::draw() {
 		this->app->draw(*this->shape);
 		this->app->draw(*this->tool);
+        //this->app->draw(this->particles);
 	}
 	
 	bool Player::isCollide(float ax, float ay, float aw, float bx, float by, float bw) {
@@ -81,33 +83,8 @@ namespace dig { namespace entity {
 			this->jumpStamina = 0;
 		}*/
 		
-		/*if (this->mining) {
-			float deltaX = this->x - this->mouseX;
-			float deltaY = this->y - this->mouseY;
-			float rad = std::atan2(deltaY, deltaX); // In radians
-			float side = (3.1415926535897 * 2) / 8;
-			//dig::Logger::get()->log(getGridCord(side, -1));
-			if ((rad < side && rad > 0) || (rad < 0 && rad > (side * -1))) {
-				this->core->removeList.push_back(getGridCord((this->x / 16) - 1, (this->y / 16)));
-			}
-			if (rad < (side * 3) && rad > side) {
-				this->core->removeList.push_back(getGridCord((this->x / 16), (this->y / 16) - 1));
-			}
-			if (rad < (side * 4) && rad > (side * 3) || (rad < (side * -3) && rad > (side * -4))) {
-				this->core->removeList.push_back(getGridCord((this->x / 16) + 1, (this->y / 16)));
-			}
-			if (rad < (side * -1) && rad > (side * -2)) {
-				this->core->removeList.push_back(getGridCord((this->x / 16), (this->y / 16) + 1));
-			}
-			//if (side < 0 && side > -90) {
-			//	this->core->removeList.push_back(getGridCord((this->x / 16), (this->y / 16) + 1));
-			/}
-			//if (side < 360 && side > 180) {
-			//	this->core->removeList.push_back(getGridCord((this->x / 16) + 1, (this->y / 16)));
-			//}
-			this->mining = 0;
-		}*/
-		
+		float blockSize = 16;
+		float endBlock = blockSize + this->hitboxsize;
 		
 		for (it = this->core->entityList.begin(); it != this->core->entityList.end(); ++it) {
 			std::string type = (*it)->type;
@@ -128,7 +105,7 @@ namespace dig { namespace entity {
 					allowX = false;
 					this->velocity->resetX();
 				}
-				if (this->isCollide(this->x, y, this->hitboxsize, (*it)->x, (*it)->y, (*it)->hitboxsize)) {
+				if (this->isCollide(this->x, y, this->hitboxsize, (*it)->x, (*it)->y, (*it)->hitboxsize) || y == (600.0f - endBlock)) {
 					allowY = false;
 					if (gravity >= 0) {
 						this->isJump = -1;
@@ -140,7 +117,10 @@ namespace dig { namespace entity {
 		}
 		this->mining = 0;
 		
-		this->pos((allowX)? x : this->x, (allowY)? y : this->y);
+		/*sf::Time elapsed = clock.restart();
+        this->particles->update(elapsed);*/
+		
+		this->pos(std::min(800.0f - endBlock, std::max(0.0f + blockSize, (allowX)? x : this->x)), std::min(600.0f - endBlock, std::max(0.0f + blockSize, (allowY)? y : this->y)));
 		if (this->isJump != -1) {
 			this->isJump = std::max(0, this->isJump - 1);
 		}

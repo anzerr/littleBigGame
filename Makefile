@@ -7,6 +7,7 @@ SRC = 	main.cpp\
 		core/engine/base/base.cpp\
 		core/engine/base/entity.cpp\
 		core/entity/chunck.cpp\
+		core/entity/partical.cpp\
 		core/entity/player.cpp
 
 CC		= g++

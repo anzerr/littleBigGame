@@ -119,6 +119,29 @@ namespace dig {
 	};
 	
 	namespace entity {
+		class ParticleSystem: public sf::Drawable, public sf::Transformable {
+			public:
+				ParticleSystem(unsigned int count) :
+				m_particles(count),
+				m_vertices(sf::Points, count),
+				m_lifetime(sf::seconds(3)),
+				m_emitter(0, 0) {};
+				void setEmitter(sf::Vector2f position);
+				void update(sf::Time elapsed);
+				
+			private:
+				void draw(sf::RenderTarget& target, sf::RenderStates states);
+				struct Particle {
+					sf::Vector2f velocity;
+					sf::Time lifetime;
+				};
+				void resetParticle(std::size_t index);		
+				std::vector<Particle> m_particles;
+				sf::VertexArray m_vertices;
+				sf::Time m_lifetime;
+				sf::Vector2f m_emitter;		
+		};
+		
 		class Chunck: public Entity {
 			private:
 				int blockTypeValue;
@@ -141,8 +164,10 @@ namespace dig {
 		
 		class Player: public Entity {
 			public:
+				//sf::Clock clock;
 				sf::RectangleShape *shape;
 				sf::RectangleShape *tool;
+				//ParticleSystem *particles;
 				sf::RenderWindow *app;
 				Player(dig::Core *core);
 				int isJump;
